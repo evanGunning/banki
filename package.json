@@ -1,0 +1,11 @@
+{
+  "name": "finance_project",
+  "version": "1.0.0",
+  "description": "A simple script to analyze CSVs of bank account and credit card statements.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Evan Gunning",
+  "license": "ISC"
+}
