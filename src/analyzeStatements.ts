@@ -44,7 +44,7 @@ const shouldIgnoreTransaction = (description: string): boolean => {
   });
 };
 
-export const analyzeCCStatement = async (dirPath: string): Promise<void> => {
+export const analyzeStatements = async (dirPath: string): Promise<void> => {
   const filePaths = await findCSVsFromDirectory(dirPath);
   if (filePaths.length === 0) {
     console.log("No statements provided.");

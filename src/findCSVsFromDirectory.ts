@@ -8,7 +8,7 @@ export const findCSVsFromDirectory = async (
   try {
     const directory = await fs.promises.opendir(directoryPath);
     for await (const file of directory) {
-      if (file.isFile() && file.name.toLocaleLowerCase().endsWith(".csv")) {
+      if (file.isFile() && file.name.toLowerCase().endsWith(".csv")) {
         csvFiles.push(path.join(directoryPath, file.name));
       }
     }
