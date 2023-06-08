@@ -1,8 +1,8 @@
 {
 	"compilerOptions": {
 		"strict": true,
-		"target": "es6",
-		"module": "commonjs",
+		"target": "esnext",
+		"module": "nodenext",
 		"moduleResolution": "node",
 		"noImplicitAny": true,
 		"removeComments": true,
