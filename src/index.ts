@@ -1,2 +1,2 @@
-const title : string = "Finance Project\n================";
-console.log(title);
+console.log("Analyzing statements...");
+console.log("=======================");
