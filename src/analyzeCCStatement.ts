@@ -20,11 +20,14 @@ const parseConcatenatedStatements = async (
 
   for (let i = 0; i < filePaths.length; i++) {
     const filePath = filePaths[i];
+    console.log(`loading ${filePath}...`);
     const parsedStatement: CCTransaction[] = await parseCSV<CCTransaction>(
       filePath
     );
     concatenatedStatements = [...concatenatedStatements, ...parsedStatement];
   }
+
+  logLineBreak();
 
   return concatenatedStatements;
 };
