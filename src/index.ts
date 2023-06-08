@@ -1,4 +1,4 @@
-import { analyzeStatements } from "./analyzeStatements";
+import { analyzeStatements } from "./analyzers/analyzeStatements";
 
 const args = process.argv.slice(2);
 const dirPath = args[0];
