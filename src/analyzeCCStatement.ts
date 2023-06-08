@@ -1,5 +1,6 @@
 import { parseCSV } from "./parseCSV";
 import { logLineBreak, logFormattedLineItem } from "./consoleLogUtils";
+import { findCSVsFromDirectory } from "./findCSVsFromDirectory";
 
 interface CCTransaction {
   "Transaction Date": string;
@@ -32,9 +33,19 @@ const parseConcatenatedStatements = async (
   return concatenatedStatements;
 };
 
-export const analyzeCCStatement = async (
-  filePaths: string[]
-): Promise<void> => {
+const shouldIgnoreTransaction = (description: string): boolean => {
+  const ignoredTransactionStrings = [
+    "payment thank you",
+    "payment to chase card",
+  ];
+
+  return ignoredTransactionStrings.some((ignoredString) => {
+    return description.toLowerCase().includes(ignoredString);
+  });
+};
+
+export const analyzeCCStatement = async (dirPath: string): Promise<void> => {
+  const filePaths = await findCSVsFromDirectory(dirPath);
   if (filePaths.length === 0) {
     console.log("No statements provided.");
     return;
@@ -43,16 +54,18 @@ export const analyzeCCStatement = async (
   const concatenatedStatements = await parseConcatenatedStatements(filePaths);
 
   const expensesByCategory: ExpensesByCategory = {};
-  concatenatedStatements.forEach(({ Amount, Category, Description }) => {
+  concatenatedStatements.forEach(({ Amount, Category, Type, Description }) => {
     const amount = Number(Amount);
+    const customCategoryLabel = Category === undefined ? Type : Category;
 
-    if (!Description.toLocaleLowerCase().includes("payment thank you")) {
+    if (!shouldIgnoreTransaction(Description)) {
       // initialize category expense to 0 if undefined
-      if (expensesByCategory[Category] === undefined) {
-        expensesByCategory[Category] = 0;
+      if (expensesByCategory[customCategoryLabel] === undefined) {
+        expensesByCategory[customCategoryLabel] = 0;
       }
 
-      expensesByCategory[Category] = expensesByCategory[Category] + amount;
+      expensesByCategory[customCategoryLabel] =
+        expensesByCategory[customCategoryLabel] + amount;
     }
   });
 
@@ -64,5 +77,5 @@ export const analyzeCCStatement = async (
   });
 
   logLineBreak();
-  logFormattedLineItem("Total Expenses", totalExpenses);
+  logFormattedLineItem("Net", totalExpenses);
 };
