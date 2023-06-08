@@ -1,5 +1,5 @@
 import { parseCSV } from "./parseCSV";
-import { currencyFormatter } from "./currencyFormatter";
+import { logLineBreak, logFormattedLineItem } from "./consoleLogUtils";
 
 interface CCTransaction {
   "Transaction Date": string;
@@ -11,23 +11,55 @@ interface CCTransaction {
   Memo: string;
 }
 
-export async function analyzeCCStatement(filePath: string): Promise<void> {
-  const parsedStatement: CCTransaction[] = await parseCSV<CCTransaction>(
-    filePath
-  );
+type ExpensesByCategory = Record<string, number>;
 
-  let expenses = 0;
-  parsedStatement.forEach((transaction) => {
-    const amount = Number(transaction.Amount);
+const parseConcatenatedStatements = async (
+  filePaths: string[]
+): Promise<CCTransaction[]> => {
+  let concatenatedStatements: CCTransaction[] = [];
 
-    if (
-      !transaction.Description.toLocaleLowerCase().includes("payment thank you")
-    ) {
-      expenses += amount;
+  for (let i = 0; i < filePaths.length; i++) {
+    const filePath = filePaths[i];
+    const parsedStatement: CCTransaction[] = await parseCSV<CCTransaction>(
+      filePath
+    );
+    concatenatedStatements = [...concatenatedStatements, ...parsedStatement];
+  }
+
+  return concatenatedStatements;
+};
+
+export const analyzeCCStatement = async (
+  filePaths: string[]
+): Promise<void> => {
+  if (filePaths.length === 0) {
+    console.log("No statements provided.");
+    return;
+  }
+
+  const concatenatedStatements = await parseConcatenatedStatements(filePaths);
+
+  const expensesByCategory: ExpensesByCategory = {};
+  concatenatedStatements.forEach(({ Amount, Category, Description }) => {
+    const amount = Number(Amount);
+
+    if (!Description.toLocaleLowerCase().includes("payment thank you")) {
+      // initialize category expense to 0 if undefined
+      if (expensesByCategory[Category] === undefined) {
+        expensesByCategory[Category] = 0;
+      }
+
+      expensesByCategory[Category] = expensesByCategory[Category] + amount;
     }
   });
 
-  console.log(
-    `Total expenses: ${currencyFormatter.format(expenses).padStart(15)}`
-  );
-}
+  let totalExpenses = 0;
+
+  Object.keys(expensesByCategory).forEach((category) => {
+    totalExpenses += expensesByCategory[category];
+    logFormattedLineItem(category, expensesByCategory[category]);
+  });
+
+  logLineBreak();
+  logFormattedLineItem("Total Expenses", totalExpenses);
+};
