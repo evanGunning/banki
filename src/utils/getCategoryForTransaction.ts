@@ -1,9 +1,8 @@
 import type { CCTransaction } from "../types";
+import { getTransactionValue } from "./getTransactionValue";
 
 export const getCategoryForTransaction = (
   transaction: CCTransaction
 ): string => {
-  const { Category, Type } = transaction;
-
-  return Category === undefined ? Type : Category;
+  return getTransactionValue(transaction, "category");
 };
