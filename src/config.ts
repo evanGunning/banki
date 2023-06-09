@@ -4,12 +4,10 @@ const configPath = ".analyzerrc.json";
 
 interface AnalyzerConfig {
   ignoredTransactionDescriptionSubstrs: string[];
-  foo: string;
 }
 
 const defaultConfig: AnalyzerConfig = {
-  ignoredTransactionDescriptionSubstrs: ["bleepblorp"],
-  foo: "bar",
+  ignoredTransactionDescriptionSubstrs: [],
 };
 
 let computedConfig: AnalyzerConfig;
