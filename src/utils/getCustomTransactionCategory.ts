@@ -2,7 +2,16 @@ import type { CCTransaction } from "../types";
 import { getTransactionValue } from "./getTransactionValue";
 import { config } from "../config";
 
-const { descriptionToCategoryMap } = config;
+const { categoryToDescriptionMap } = config;
+
+const descriptionToCategoryMap: Record<string, string> = {};
+
+Object.keys(categoryToDescriptionMap).forEach((category) => {
+  categoryToDescriptionMap[category].forEach((description) => {
+    descriptionToCategoryMap[description] = category;
+  });
+});
+
 const descriptionsToMatch = Object.keys(descriptionToCategoryMap);
 
 export const getCustomTransactionCategory = (
