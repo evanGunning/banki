@@ -1,4 +1,5 @@
 import type { CCTransaction } from "../types";
+import { getTransactionValue } from "./getTransactionValue";
 import { config } from "../config";
 
 const { ignoredTransactionDescriptionSubstrs } = config;
@@ -7,8 +8,10 @@ export const shouldIgnoreTransaction = (
   transaction: CCTransaction
 ): boolean => {
   try {
-    const description =
-      transaction[config.transactionDescriptionKey].toLowerCase();
+    const description = getTransactionValue(
+      transaction,
+      "description"
+    ).toLowerCase();
 
     return ignoredTransactionDescriptionSubstrs.some((ignoredString) => {
       return description.toLowerCase().includes(ignoredString);

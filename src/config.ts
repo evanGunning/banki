@@ -6,12 +6,21 @@ interface AnalyzerConfig {
   // if a transaction description contains any of these substrings, it will be ignored
   ignoredTransactionDescriptionSubstrs: string[];
   // this set of keys will be used, in order, to determine how to read description values from provided CSVs
-  transactionDescriptionKey: string;
+  // the first key that results in a non-empty value will be used for the corresponding concept
+  transactionKeys: {
+    description: string[];
+    amount: string[];
+    category: string[];
+  };
 }
 
 const defaultConfig: AnalyzerConfig = {
   ignoredTransactionDescriptionSubstrs: [],
-  transactionDescriptionKey: "Description",
+  transactionKeys: {
+    description: ["Description"],
+    amount: ["Amount"],
+    category: ["Category", "Type"],
+  },
 };
 
 let computedConfig: AnalyzerConfig;
