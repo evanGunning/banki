@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "Node CLI for analyzing CSVs of bank account and credit card statements to produce insightful outputs. Highly customizable.",
   "main": "index.js",
-  "module": "nodenext",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx ts-node src/index.ts",
-    "lint": "npx eslint . --ext .ts"
+    "lint": "npx eslint . --ext .ts",
+    "build": "npx tsc",
+    "cli": "node dist/cli.js"
   },
   "author": "Evan Gunning",
   "license": "ISC",
