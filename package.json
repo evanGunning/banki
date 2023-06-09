@@ -1,7 +1,7 @@
 {
-  "name": "finance_project",
+  "name": "banki",
   "version": "1.0.0",
-  "description": "A simple script to analyze CSVs of bank account and credit card statements.",
+  "description": "Node CLI for analyzing CSVs of bank account and credit card statements to produce insightful outputs. Highly customizable.",
   "main": "index.js",
   "module": "nodenext",
   "scripts": {
