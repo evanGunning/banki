@@ -3,7 +3,8 @@ import { logLineBreak, logFormattedLineItem } from "../utils/consoleLogUtils";
 import { findCSVsFromDirectory } from "../utils/findCSVsFromDirectory";
 import { loadConcatenatedStatements } from "../utils/loadConcatenatedStatements";
 import { shouldIgnoreTransaction } from "../utils/shouldIgnoreTransaction";
-import { getCategoryForTransaction } from "../utils/getCategoryForTransaction";
+import { getCustomTransactionCategory } from "../utils/getCustomTransactionCategory";
+import { getTransactionValue } from "../utils/getTransactionValue";
 
 type ExpenseCategories = Record<string, number>;
 
@@ -17,19 +18,17 @@ const computeTransactionSummary = (
 ): TransactionSummary => {
   const expenseCategories: ExpenseCategories = {};
   transactions.forEach((transaction) => {
-    const { Amount } = transaction;
-    const amount = Number(Amount);
-
-    const customCategoryLabel = getCategoryForTransaction(transaction);
+    const amount = Number(getTransactionValue(transaction, "amount"));
+    const customCategory = getCustomTransactionCategory(transaction);
 
     if (!shouldIgnoreTransaction(transaction)) {
       // initialize category expense to 0 if undefined
-      if (expenseCategories[customCategoryLabel] === undefined) {
-        expenseCategories[customCategoryLabel] = 0;
+      if (expenseCategories[customCategory] === undefined) {
+        expenseCategories[customCategory] = 0;
       }
 
-      expenseCategories[customCategoryLabel] =
-        expenseCategories[customCategoryLabel] + amount;
+      expenseCategories[customCategory] =
+        expenseCategories[customCategory] + amount;
     }
   });
 
