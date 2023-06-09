@@ -49,9 +49,11 @@ const logTransactionSummary = (
 ): void => {
   const { expenseCategories, net } = transactionSummary;
 
-  Object.keys(expenseCategories).forEach((category) => {
-    logFormattedLineItem(category, expenseCategories[category]);
-  });
+  Object.keys(expenseCategories)
+    .sort()
+    .forEach((category) => {
+      logFormattedLineItem(category, expenseCategories[category]);
+    });
 
   logLineBreak();
   logFormattedLineItem("Net", net);
