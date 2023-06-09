@@ -35,9 +35,8 @@ try {
   };
   console.log("loading .analyzerrc.json settings...");
 } catch (e) {
+  console.log("no .analyzerrc.json found, using default settings");
   computedConfig = defaultConfig;
 }
-
-console.log(computedConfig);
 
 export const config = computedConfig;
