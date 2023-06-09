@@ -12,6 +12,9 @@ interface AnalyzerConfig {
     amount: string[];
     category: string[];
   };
+  // if a transaction description matches a key in this map, the corresponding value will be used as the category
+  // the match is case-insensitive
+  descriptionToCategoryMap: Record<string, string>;
 }
 
 const defaultConfig: AnalyzerConfig = {
@@ -21,6 +24,7 @@ const defaultConfig: AnalyzerConfig = {
     amount: ["Amount"],
     category: ["Category", "Type"],
   },
+  descriptionToCategoryMap: {},
 };
 
 let computedConfig: AnalyzerConfig;
@@ -34,6 +38,6 @@ try {
   computedConfig = defaultConfig;
 }
 
-// console.log(computedConfig);
+console.log(computedConfig);
 
 export const config = computedConfig;
