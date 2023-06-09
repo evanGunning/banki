@@ -1,16 +1,7 @@
-import { parseCSV } from "../utils/parseCSV";
 import { logLineBreak, logFormattedLineItem } from "../utils/consoleLogUtils";
 import { findCSVsFromDirectory } from "../utils/findCSVsFromDirectory";
-
-interface CCTransaction {
-  "Transaction Date": string;
-  "Post Date": string;
-  Description: string;
-  Category: string;
-  Type: string;
-  Amount: string;
-  Memo: string;
-}
+import { loadConcatenatedStatements } from "./loadConcatenatedStatements";
+import type { CCTransaction } from "./loadConcatenatedStatements";
 
 type ExpenseCategories = Record<string, number>;
 
@@ -19,32 +10,14 @@ interface TransactionSummary {
   net: number;
 }
 
-const loadConcatenatedStatements = async (
-  filePaths: string[]
-): Promise<CCTransaction[]> => {
-  let transactions: CCTransaction[] = [];
-
-  for (let i = 0; i < filePaths.length; i++) {
-    const filePath = filePaths[i];
-    console.log(`loading ${filePath}...`);
-    const parsedStatement: CCTransaction[] = await parseCSV<CCTransaction>(
-      filePath
-    );
-    transactions = [...transactions, ...parsedStatement];
-  }
-
-  logLineBreak();
-
-  return transactions;
-};
-
 const shouldIgnoreTransaction = (description: string): boolean => {
-  const ignoredTransactionStrings = [
-    "payment thank you",
-    "payment to chase card",
+  const ignoredTransactionDescriptionSubstrs = [
+    "zzzzzzzzzzzzzzzzzzzzzzz",
+    // "payment thank you",
+    // "payment to chase card",
   ];
 
-  return ignoredTransactionStrings.some((ignoredString) => {
+  return ignoredTransactionDescriptionSubstrs.some((ignoredString) => {
     return description.toLowerCase().includes(ignoredString);
   });
 };
