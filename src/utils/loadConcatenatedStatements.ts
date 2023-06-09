@@ -1,15 +1,6 @@
+import type { CCTransaction } from "../types";
 import { parseCSV } from "./parseCSV";
 import { logLineBreak } from "./consoleLogUtils";
-
-export interface CCTransaction {
-  "Transaction Date": string;
-  "Post Date": string;
-  Description: string;
-  Category: string;
-  Type: string;
-  Amount: string;
-  Memo: string;
-}
 
 export const loadConcatenatedStatements = async (
   filePaths: string[]

@@ -16,10 +16,11 @@ try {
     ...defaultConfig,
     ...JSON.parse(readFileSync(configPath, "utf-8")),
   };
+  console.log("loading .analyzerrc.json settings...");
 } catch (e) {
   computedConfig = defaultConfig;
 }
 
-console.log(computedConfig);
+// console.log(computedConfig);
 
 export const config = computedConfig;

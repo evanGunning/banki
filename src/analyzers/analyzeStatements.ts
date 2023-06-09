@@ -1,8 +1,9 @@
+import type { CCTransaction } from "../types";
 import { logLineBreak, logFormattedLineItem } from "../utils/consoleLogUtils";
 import { findCSVsFromDirectory } from "../utils/findCSVsFromDirectory";
 import { loadConcatenatedStatements } from "../utils/loadConcatenatedStatements";
-import type { CCTransaction } from "../utils/loadConcatenatedStatements";
 import { shouldIgnoreTransaction } from "../utils/shouldIgnoreTransaction";
+import { getCategoryForTransaction } from "../utils/getCategoryForTransaction";
 
 type ExpenseCategories = Record<string, number>;
 
@@ -15,9 +16,11 @@ const computeTransactionSummary = (
   transactions: CCTransaction[]
 ): TransactionSummary => {
   const expenseCategories: ExpenseCategories = {};
-  transactions.forEach(({ Amount, Category, Type, Description }) => {
+  transactions.forEach((transaction) => {
+    const { Amount, Description } = transaction;
     const amount = Number(Amount);
-    const customCategoryLabel = Category === undefined ? Type : Category;
+
+    const customCategoryLabel = getCategoryForTransaction(transaction);
 
     if (!shouldIgnoreTransaction(Description)) {
       // initialize category expense to 0 if undefined
