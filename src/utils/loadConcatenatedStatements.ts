@@ -1,5 +1,5 @@
-import { parseCSV } from "../utils/parseCSV";
-import { logLineBreak } from "../utils/consoleLogUtils";
+import { parseCSV } from "./parseCSV";
+import { logLineBreak } from "./consoleLogUtils";
 
 export interface CCTransaction {
   "Transaction Date": string;

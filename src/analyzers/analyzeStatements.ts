@@ -1,7 +1,8 @@
 import { logLineBreak, logFormattedLineItem } from "../utils/consoleLogUtils";
 import { findCSVsFromDirectory } from "../utils/findCSVsFromDirectory";
-import { loadConcatenatedStatements } from "./loadConcatenatedStatements";
-import type { CCTransaction } from "./loadConcatenatedStatements";
+import { loadConcatenatedStatements } from "../utils/loadConcatenatedStatements";
+import type { CCTransaction } from "../utils/loadConcatenatedStatements";
+import { shouldIgnoreTransaction } from "../utils/shouldIgnoreTransaction";
 
 type ExpenseCategories = Record<string, number>;
 
@@ -9,18 +10,6 @@ interface TransactionSummary {
   expenseCategories: ExpenseCategories;
   net: number;
 }
-
-const shouldIgnoreTransaction = (description: string): boolean => {
-  const ignoredTransactionDescriptionSubstrs = [
-    "zzzzzzzzzzzzzzzzzzzzzzz",
-    // "payment thank you",
-    // "payment to chase card",
-  ];
-
-  return ignoredTransactionDescriptionSubstrs.some((ignoredString) => {
-    return description.toLowerCase().includes(ignoredString);
-  });
-};
 
 const computeTransactionSummary = (
   transactions: CCTransaction[]
