@@ -17,12 +17,12 @@ const computeTransactionSummary = (
 ): TransactionSummary => {
   const expenseCategories: ExpenseCategories = {};
   transactions.forEach((transaction) => {
-    const { Amount, Description } = transaction;
+    const { Amount } = transaction;
     const amount = Number(Amount);
 
     const customCategoryLabel = getCategoryForTransaction(transaction);
 
-    if (!shouldIgnoreTransaction(Description)) {
+    if (!shouldIgnoreTransaction(transaction)) {
       // initialize category expense to 0 if undefined
       if (expenseCategories[customCategoryLabel] === undefined) {
         expenseCategories[customCategoryLabel] = 0;
