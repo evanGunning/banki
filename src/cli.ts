@@ -1,8 +1,6 @@
 import { program } from "commander";
 import { analyzeStatements } from "./analyzers/analyzeStatements";
 
-const unused = "";
-
 program
   .requiredOption(
     "-d, --dir <dir>, Specify the directory where your statements are located"
