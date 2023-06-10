@@ -8,8 +8,16 @@ import { getTransactionValue } from "../utils/getTransactionValue";
 
 type ExpenseCategories = Record<string, number>;
 
+interface RecurringTransaction {
+  description: string;
+  estimatedAmount: number;
+  estimatedDayNumber: number;
+  isPaid: boolean;
+}
+
 interface TransactionSummary {
   expenseCategories: ExpenseCategories;
+  recurringTransactions: RecurringTransaction[];
   net: number;
 }
 
@@ -41,6 +49,7 @@ const computeTransactionSummary = (
   return {
     net,
     expenseCategories,
+    recurringTransactions: [],
   };
 };
 
@@ -67,6 +76,8 @@ export const analyzeStatements = async (dirPath: string): Promise<void> => {
   }
 
   const transactions = await loadConcatenatedStatements(filePaths);
+
   const transactionSummary = computeTransactionSummary(transactions);
   logTransactionSummary(transactionSummary);
+  // logRecurringTransactions(transactionSummary.recurringTransactions);
 };
