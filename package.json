@@ -2,7 +2,10 @@
   "name": "banki",
   "version": "1.0.0",
   "description": "Node CLI for analyzing CSVs of bank account and credit card statements to produce insightful outputs. Highly customizable.",
-  "main": "index.js",
+  "main": "dist/cli.js",
+  "engines": {
+    "node": "18.16.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "npx eslint . --ext .ts",
