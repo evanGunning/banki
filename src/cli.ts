@@ -2,7 +2,7 @@ import { program } from "commander";
 import { analyzeStatements } from "./analyzers/analyzeStatements";
 
 program
-  .option(
+  .requiredOption(
     "-d, --dir <dir>, Specify the directory where your statements are located"
   )
   .action((options) => {
