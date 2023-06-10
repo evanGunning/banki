@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 
-const configPath = ".analyzerrc.json";
+const configPath = ".bankirc.json";
 
 interface AnalyzerConfig {
   // if a transaction description contains any of these substrings, it will be ignored
