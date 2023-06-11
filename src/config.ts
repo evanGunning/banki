@@ -9,6 +9,13 @@ interface RecurringTransactionRc {
   label: string;
 }
 
+interface PaycheckRc {
+  description: string;
+  label: string;
+  estimatedAmount: number;
+  frequencyInDays: number;
+}
+
 interface AnalyzerConfig {
   // if a transaction description contains any of these substrings, it will be ignored
   ignoredTransactionDescriptionSubstrs: string[];
@@ -23,7 +30,10 @@ interface AnalyzerConfig {
   // if a transaction description matches one of the descriptions in this map, the corresponding key will be used as the category
   // the match is case-insensitive
   categoryToDescriptionMap: Record<string, string[]>;
+  // if a transaction description matches one of the descriptions in this map, whether or not the transactions
+  // is paid will be remembered and unpaid transactions will be included in a projection of end of month costs
   recurringTransactions: RecurringTransactionRc[];
+  paychecks: PaycheckRc[];
 }
 
 const defaultConfig: AnalyzerConfig = {
@@ -36,6 +46,7 @@ const defaultConfig: AnalyzerConfig = {
   ignoredTransactionDescriptionSubstrs: [],
   categoryToDescriptionMap: {},
   recurringTransactions: [],
+  paychecks: [],
 };
 
 let computedConfig: AnalyzerConfig;
