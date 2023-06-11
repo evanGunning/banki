@@ -1,19 +1,18 @@
-import type { CCTransaction } from "../types";
-import { logLineBreak, logFormattedLineItem } from "../utils/consoleLogUtils";
+import type { CCTransaction, RecurringTransaction } from "../types";
+import {
+  logLineBreak,
+  logFormattedLineItem,
+  logRecurringTransactionTableHeader,
+  logFormattedRecurringTransaction,
+} from "../utils/consoleLogUtils";
 import { findCSVsFromDirectory } from "../utils/findCSVsFromDirectory";
 import { loadConcatenatedStatements } from "../utils/loadConcatenatedStatements";
 import { shouldIgnoreTransaction } from "../utils/shouldIgnoreTransaction";
 import { getCustomTransactionCategory } from "../utils/getCustomTransactionCategory";
 import { getTransactionValue } from "../utils/getTransactionValue";
+import { config } from "../config";
 
 type ExpenseCategories = Record<string, number>;
-
-interface RecurringTransaction {
-  description: string;
-  estimatedAmount: number;
-  estimatedDayNumber: number;
-  isPaid: boolean;
-}
 
 interface TransactionSummary {
   expenseCategories: ExpenseCategories;
@@ -21,10 +20,36 @@ interface TransactionSummary {
   net: number;
 }
 
+const findRecurringTransaction = (
+  recurringTransactions: RecurringTransaction[],
+  curTransaction: CCTransaction
+): number => {
+  return recurringTransactions.findIndex((recTransaction, index) => {
+    if (
+      getTransactionValue(curTransaction, "description")
+        .toLowerCase()
+        .includes(recTransaction.description.toLowerCase())
+    ) {
+      return true;
+    }
+    return false;
+  });
+};
+
 const computeTransactionSummary = (
   transactions: CCTransaction[]
 ): TransactionSummary => {
   const expenseCategories: ExpenseCategories = {};
+  const recurringTransactions: RecurringTransaction[] =
+    config.recurringTransactions.map((recTransaction) => {
+      return {
+        ...recTransaction,
+        isPaid: false,
+        actualAmount: 0,
+        actualDate: "",
+      };
+    });
+
   transactions.forEach((transaction) => {
     const amount = Number(getTransactionValue(transaction, "amount"));
     const customCategory = getCustomTransactionCategory(transaction);
@@ -37,6 +62,17 @@ const computeTransactionSummary = (
 
       expenseCategories[customCategory] =
         expenseCategories[customCategory] + amount;
+
+      const recurringTransactionIndex = findRecurringTransaction(
+        recurringTransactions,
+        transaction
+      );
+      if (recurringTransactionIndex !== -1) {
+        recurringTransactions[recurringTransactionIndex].isPaid = true;
+        recurringTransactions[recurringTransactionIndex].actualAmount = amount;
+        recurringTransactions[recurringTransactionIndex].actualDate =
+          getTransactionValue(transaction, "postDate");
+      }
     }
   });
 
@@ -49,14 +85,14 @@ const computeTransactionSummary = (
   return {
     net,
     expenseCategories,
-    recurringTransactions: [],
+    recurringTransactions,
   };
 };
 
 const logTransactionSummary = (
   transactionSummary: TransactionSummary
 ): void => {
-  const { expenseCategories, net } = transactionSummary;
+  const { expenseCategories, recurringTransactions, net } = transactionSummary;
 
   Object.keys(expenseCategories)
     .sort()
@@ -66,6 +102,12 @@ const logTransactionSummary = (
 
   logLineBreak();
   logFormattedLineItem("Net", net);
+
+  logRecurringTransactionTableHeader();
+  recurringTransactions.forEach((recTransaction) => {
+    logFormattedRecurringTransaction(recTransaction);
+  });
+  logLineBreak("large");
 };
 
 export const analyzeStatements = async (dirPath: string): Promise<void> => {
@@ -79,5 +121,4 @@ export const analyzeStatements = async (dirPath: string): Promise<void> => {
 
   const transactionSummary = computeTransactionSummary(transactions);
   logTransactionSummary(transactionSummary);
-  // logRecurringTransactions(transactionSummary.recurringTransactions);
 };

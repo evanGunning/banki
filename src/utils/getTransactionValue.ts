@@ -1,7 +1,7 @@
 import type { CCTransaction } from "../types";
 import { config } from "../config";
 
-type TransactionKey = "description" | "amount" | "category";
+type TransactionKey = "description" | "amount" | "category" | "postDate";
 
 export const getTransactionValue = (
   transaction: CCTransaction,
