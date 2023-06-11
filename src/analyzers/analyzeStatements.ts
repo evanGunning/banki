@@ -1,4 +1,5 @@
 import type { CCTransaction, RecurringTransaction } from "../types";
+import type { CLIOptions } from "../cli";
 import {
   logLineBreak,
   logFormattedLineItem,
@@ -11,7 +12,11 @@ import { getCustomTransactionCategory } from "../utils/getCustomTransactionCateg
 import { getTransactionValue } from "../utils/getTransactionValue";
 import { config } from "../config";
 
-type ExpenseCategories = Record<string, number>;
+interface ExpenseCategory {
+  amount: number;
+  transactions: CCTransaction[];
+}
+type ExpenseCategories = Record<string, ExpenseCategory>;
 
 interface TransactionSummary {
   expenseCategories: ExpenseCategories;
@@ -57,11 +62,15 @@ const computeTransactionSummary = (
     if (!shouldIgnoreTransaction(transaction)) {
       // initialize category expense to 0 if undefined
       if (expenseCategories[customCategory] === undefined) {
-        expenseCategories[customCategory] = 0;
+        expenseCategories[customCategory] = {
+          amount: 0,
+          transactions: [],
+        };
       }
 
-      expenseCategories[customCategory] =
-        expenseCategories[customCategory] + amount;
+      expenseCategories[customCategory].amount =
+        expenseCategories[customCategory].amount + amount;
+      expenseCategories[customCategory].transactions.push(transaction);
 
       const recurringTransactionIndex = findRecurringTransaction(
         recurringTransactions,
@@ -76,11 +85,9 @@ const computeTransactionSummary = (
     }
   });
 
-  let net = 0;
-
-  Object.keys(expenseCategories).forEach((category) => {
-    net += expenseCategories[category];
-  });
+  const net = Object.keys(expenseCategories).reduce((acc, category) => {
+    return acc + expenseCategories[category].amount;
+  }, 0);
 
   const unpaidRecurringEstimate = recurringTransactions.reduce(
     (acc, recTransaction) => {
@@ -101,14 +108,31 @@ const computeTransactionSummary = (
   };
 };
 
-const logCategorySummary = (transactionSummary: TransactionSummary): void => {
+const logCategorySummary = (
+  transactionSummary: TransactionSummary,
+  showTransactions: boolean
+): void => {
   const { expenseCategories, net } = transactionSummary;
   console.log("Transaction Summary By Category");
   logLineBreak();
   Object.keys(expenseCategories)
     .sort()
     .forEach((category) => {
-      logFormattedLineItem(category, expenseCategories[category], true);
+      const transactionCount = expenseCategories[category].transactions.length;
+      logFormattedLineItem(
+        `(${transactionCount}) ${category}`,
+        expenseCategories[category].amount,
+        true
+      );
+
+      if (showTransactions) {
+        expenseCategories[category].transactions.forEach((transaction) => {
+          logFormattedLineItem(
+            getTransactionValue(transaction, "description"),
+            Number(getTransactionValue(transaction, "amount"))
+          );
+        });
+      }
     });
   logLineBreak("small");
   logFormattedLineItem("Net", net, true);
@@ -142,16 +166,20 @@ const logRecurringTransactionSummary = (
 };
 
 const logTransactionSummary = (
-  transactionSummary: TransactionSummary
+  transactionSummary: TransactionSummary,
+  showTransactions: boolean
 ): void => {
   console.log("\n");
-  logCategorySummary(transactionSummary);
+  logCategorySummary(transactionSummary, showTransactions);
   console.log("\n");
   logRecurringTransactionSummary(transactionSummary);
 };
 
-export const analyzeStatements = async (dirPath: string): Promise<void> => {
-  const filePaths = await findCSVsFromDirectory(dirPath);
+export const analyzeStatements = async (
+  cliOptions: CLIOptions
+): Promise<void> => {
+  const { dir, showTransactions } = cliOptions;
+  const filePaths = await findCSVsFromDirectory(dir);
   if (filePaths.length === 0) {
     console.log("No statements provided.");
     return;
@@ -159,5 +187,5 @@ export const analyzeStatements = async (dirPath: string): Promise<void> => {
 
   const transactions = await loadConcatenatedStatements(filePaths);
   const transactionSummary = computeTransactionSummary(transactions);
-  logTransactionSummary(transactionSummary);
+  logTransactionSummary(transactionSummary, showTransactions);
 };
