@@ -1,4 +1,5 @@
 import type { RecurringTransaction } from "../types";
+import chalk from "chalk";
 
 export const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -34,6 +35,7 @@ export const logFormattedLineItem = (
 export const logRecurringTransactionTableHeader = (): void => {
   logLineBreak("large");
   console.log("\n\nRecurring Transactions");
+  logLineBreak("large");
   console.log(
     `${"Label".padEnd(20)}${"Amount".padStart(20)}${"Day".padStart(20)}`
   );
@@ -56,15 +58,21 @@ export const logFormattedRecurringTransaction = (
 
   if (isPaid) {
     console.log(
-      `${label.slice(0, maxLabelLength).padEnd(colWidth)}${currencyFormatter
-        .format(actualAmount)
-        .padStart(colWidth)}${actualDate.padStart(colWidth)}`
+      chalk.green(
+        `${label.slice(0, maxLabelLength).padEnd(colWidth)}${currencyFormatter
+          .format(actualAmount)
+          .padStart(colWidth)}${actualDate.padStart(colWidth)}`
+      )
     );
   } else {
     console.log(
-      `${label.slice(0, maxLabelLength).padEnd(colWidth)}${currencyFormatter
-        .format(estimatedAmount)
-        .padStart(colWidth)}${estimatedDayNumber.toString().padStart(colWidth)}`
+      chalk.red(
+        `${label.slice(0, maxLabelLength).padEnd(colWidth)}${currencyFormatter
+          .format(estimatedAmount)
+          .padStart(colWidth)}${estimatedDayNumber
+          .toString()
+          .padStart(colWidth)}`
+      )
     );
   }
 };

@@ -118,7 +118,6 @@ export const analyzeStatements = async (dirPath: string): Promise<void> => {
   }
 
   const transactions = await loadConcatenatedStatements(filePaths);
-
   const transactionSummary = computeTransactionSummary(transactions);
   logTransactionSummary(transactionSummary);
 };
