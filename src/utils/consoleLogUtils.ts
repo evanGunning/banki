@@ -1,7 +1,7 @@
 import type { RecurringTransaction } from "../types";
 import chalk from "chalk";
 
-const maxLabelLength = 24;
+const maxLabelLength = 20;
 const colWidth = 20;
 
 export const currencyFormatter = new Intl.NumberFormat("en-US", {
