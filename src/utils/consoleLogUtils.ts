@@ -36,16 +36,6 @@ export const logFormattedLineItem = (
   );
 };
 
-export const logRecurringTransactionTableHeader = (): void => {
-  logLineBreak("large");
-  console.log("Recurring Transactions");
-  logLineBreak("large");
-  console.log(
-    `${"Label".padEnd(20)}${"Amount".padStart(20)}${"Day".padStart(20)}`
-  );
-  logLineBreak("large");
-};
-
 export const logFormattedRecurringTransaction = (
   recTransaction: RecurringTransaction
 ): void => {
