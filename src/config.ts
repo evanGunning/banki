@@ -1,6 +1,13 @@
 import { readFileSync } from "fs";
 
-const configPath = ".analyzerrc.json";
+const configPath = ".bankirc.json";
+
+interface RecurringTransactionRc {
+  description: string;
+  estimatedAmount: number;
+  estimatedDayNumber: number;
+  label: string;
+}
 
 interface AnalyzerConfig {
   // if a transaction description contains any of these substrings, it will be ignored
@@ -11,10 +18,12 @@ interface AnalyzerConfig {
     description: string[];
     amount: string[];
     category: string[];
+    postDate: string[];
   };
   // if a transaction description matches one of the descriptions in this map, the corresponding key will be used as the category
   // the match is case-insensitive
   categoryToDescriptionMap: Record<string, string[]>;
+  recurringTransactions: RecurringTransactionRc[];
 }
 
 const defaultConfig: AnalyzerConfig = {
@@ -22,9 +31,11 @@ const defaultConfig: AnalyzerConfig = {
     description: ["Description"],
     amount: ["Amount"],
     category: ["Category", "Type"],
+    postDate: ["Post Date", "Posting Date"],
   },
   ignoredTransactionDescriptionSubstrs: [],
   categoryToDescriptionMap: {},
+  recurringTransactions: [],
 };
 
 let computedConfig: AnalyzerConfig;

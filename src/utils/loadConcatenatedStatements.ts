@@ -1,6 +1,5 @@
 import type { CCTransaction } from "../types";
 import { parseCSV } from "./parseCSV";
-import { logLineBreak } from "./consoleLogUtils";
 
 export const loadConcatenatedStatements = async (
   filePaths: string[]
@@ -15,8 +14,6 @@ export const loadConcatenatedStatements = async (
     );
     transactions = [...transactions, ...parsedStatement];
   }
-
-  logLineBreak();
 
   return transactions;
 };
