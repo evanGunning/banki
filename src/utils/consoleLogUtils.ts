@@ -24,16 +24,25 @@ export const logLineBreak = (size: LineBreakSize = "small"): void => {
 // Intended for use in logging a summary of a transaction by category
 export const logFormattedLineItem = (
   label: string,
-  currencyVal: number
+  currencyVal: number,
+  useColor: boolean = false
 ): void => {
-  console.log(
-    `${label
-      .concat(":")
-      .slice(0, maxLabelLength)
-      .padEnd(colWidth)}${currencyFormatter
-      .format(currencyVal)
-      .padStart(colWidth)}`
-  );
+  const logStr = `${label
+    .concat(":")
+    .slice(0, maxLabelLength)
+    .padEnd(colWidth)}${currencyFormatter
+    .format(currencyVal)
+    .padStart(colWidth)}`;
+
+  if (useColor) {
+    if (currencyVal < 0) {
+      console.log(chalk.red(logStr));
+    } else {
+      console.log(chalk.green(logStr));
+    }
+  } else {
+    console.log(logStr);
+  }
 };
 
 export const logFormattedRecurringTransaction = (
@@ -52,7 +61,7 @@ export const logFormattedRecurringTransaction = (
     console.log(
       chalk.green(
         `${label.slice(0, maxLabelLength).padEnd(colWidth)}${currencyFormatter
-          .format(actualAmount)
+          .format(-1 * actualAmount)
           .padStart(colWidth)}${actualDate.padStart(colWidth)}`
       )
     );

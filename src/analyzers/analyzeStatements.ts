@@ -108,10 +108,10 @@ const logCategorySummary = (transactionSummary: TransactionSummary): void => {
   Object.keys(expenseCategories)
     .sort()
     .forEach((category) => {
-      logFormattedLineItem(category, expenseCategories[category]);
+      logFormattedLineItem(category, expenseCategories[category], true);
     });
   logLineBreak("small");
-  logFormattedLineItem("Net", net);
+  logFormattedLineItem("Net", net, true);
   logLineBreak("small");
 };
 
@@ -134,8 +134,10 @@ const logRecurringTransactionSummary = (
     logFormattedRecurringTransaction(recTransaction);
   });
   logLineBreak("large");
-  logFormattedLineItem("Est. Unpaid", unpaidRecurringEstimate);
-  logFormattedLineItem("Proj. Net", net - unpaidRecurringEstimate);
+  logFormattedLineItem("Proj. Bills", -1 * unpaidRecurringEstimate, true);
+  logFormattedLineItem("Proj. Income", 0, true); // TODO: add income
+  logLineBreak("small");
+  logFormattedLineItem("Proj. Net", net - unpaidRecurringEstimate, true);
   logLineBreak("large");
 };
 
