@@ -4,6 +4,7 @@ import {
   logLineBreak,
   logFormattedLineItem,
   logFormattedRecurringTransaction,
+  colWidth,
 } from "../utils/consoleLogUtils";
 import { findCSVsFromDirectory } from "../utils/findCSVsFromDirectory";
 import { loadConcatenatedStatements } from "../utils/loadConcatenatedStatements";
@@ -130,7 +131,10 @@ const logCategorySummary = (
       if (showTransactions) {
         expenseCategories[category].transactions.forEach((transaction) => {
           logFormattedLineItem(
-            getTransactionValue(transaction, "description"),
+            `${"".padStart(4)}${getTransactionValue(
+              transaction,
+              "description"
+            )}`,
             Number(getTransactionValue(transaction, "amount"))
           );
         });
@@ -145,7 +149,9 @@ const logRecurringTransactionTableHeader = (): void => {
   console.log("Recurring Transactions");
   logLineBreak("large");
   console.log(
-    `${"Label".padEnd(20)}${"Amount".padStart(20)}${"Day".padStart(20)}`
+    `${"Label".padEnd(colWidth)}${"Amount".padStart(colWidth)}${"Day".padStart(
+      colWidth
+    )}`
   );
   logLineBreak("large");
 };
@@ -167,7 +173,7 @@ const logRecurringTransactionSummary = (
   logLineBreak("large");
 };
 
-const logTransactionSummary = (
+const logAnalysisSummary = (
   transactionSummary: TransactionSummary,
   showTransactions: boolean
 ): void => {
@@ -189,5 +195,5 @@ export const analyzeStatements = async (
 
   const transactions = await loadConcatenatedStatements(filePaths);
   const transactionSummary = computeTransactionSummary(transactions);
-  logTransactionSummary(transactionSummary, showTransactions);
+  logAnalysisSummary(transactionSummary, showTransactions);
 };
