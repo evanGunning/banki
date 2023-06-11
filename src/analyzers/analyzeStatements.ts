@@ -2,7 +2,6 @@ import type { CCTransaction, RecurringTransaction } from "../types";
 import {
   logLineBreak,
   logFormattedLineItem,
-  logRecurringTransactionTableHeader,
   logFormattedRecurringTransaction,
 } from "../utils/consoleLogUtils";
 import { findCSVsFromDirectory } from "../utils/findCSVsFromDirectory";
@@ -18,6 +17,7 @@ interface TransactionSummary {
   expenseCategories: ExpenseCategories;
   recurringTransactions: RecurringTransaction[];
   net: number;
+  unpaidRecurringEstimate: number;
 }
 
 const findRecurringTransaction = (
@@ -82,32 +82,70 @@ const computeTransactionSummary = (
     net += expenseCategories[category];
   });
 
+  const unpaidRecurringEstimate = recurringTransactions.reduce(
+    (acc, recTransaction) => {
+      if (!recTransaction.isPaid) {
+        return acc + recTransaction.estimatedAmount;
+      } else {
+        return acc;
+      }
+    },
+    0
+  );
+
   return {
     net,
     expenseCategories,
     recurringTransactions,
+    unpaidRecurringEstimate,
   };
 };
 
-const logTransactionSummary = (
-  transactionSummary: TransactionSummary
-): void => {
-  const { expenseCategories, recurringTransactions, net } = transactionSummary;
-
+const logCategorySummary = (transactionSummary: TransactionSummary): void => {
+  const { expenseCategories, net } = transactionSummary;
+  console.log("Transaction Summary By Category");
+  logLineBreak();
   Object.keys(expenseCategories)
     .sort()
     .forEach((category) => {
       logFormattedLineItem(category, expenseCategories[category]);
     });
-
-  logLineBreak();
+  logLineBreak("small");
   logFormattedLineItem("Net", net);
+  logLineBreak("small");
+};
 
+const logRecurringTransactionTableHeader = (): void => {
+  console.log("Recurring Transactions");
+  logLineBreak("large");
+  console.log(
+    `${"Label".padEnd(20)}${"Amount".padStart(20)}${"Day".padStart(20)}`
+  );
+  logLineBreak("large");
+};
+
+const logRecurringTransactionSummary = (
+  transactionSummary: TransactionSummary
+): void => {
+  const { recurringTransactions, unpaidRecurringEstimate, net } =
+    transactionSummary;
   logRecurringTransactionTableHeader();
   recurringTransactions.forEach((recTransaction) => {
     logFormattedRecurringTransaction(recTransaction);
   });
   logLineBreak("large");
+  logFormattedLineItem("Est. Unpaid", unpaidRecurringEstimate);
+  logFormattedLineItem("Proj. Net", net - unpaidRecurringEstimate);
+  logLineBreak("large");
+};
+
+const logTransactionSummary = (
+  transactionSummary: TransactionSummary
+): void => {
+  console.log("\n");
+  logCategorySummary(transactionSummary);
+  console.log("\n");
+  logRecurringTransactionSummary(transactionSummary);
 };
 
 export const analyzeStatements = async (dirPath: string): Promise<void> => {
