@@ -12,11 +12,13 @@ import { getCustomTransactionCategory } from "../utils/getCustomTransactionCateg
 import { getTransactionValue } from "../utils/getTransactionValue";
 import { config } from "../config";
 
-interface ExpenseCategory {
+interface CategorySummary {
   amount: number;
   transactions: CCTransaction[];
 }
-type ExpenseCategories = Record<string, ExpenseCategory>;
+
+// The string key is the category name
+type ExpenseCategories = Record<string, CategorySummary>;
 
 interface TransactionSummary {
   expenseCategories: ExpenseCategories;
