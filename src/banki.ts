@@ -1,6 +1,5 @@
 import type { CLIOptions } from "./cli";
-import { findCSVsFromDirectory } from "./utils/findCSVsFromDirectory";
-import { loadConcatenatedStatements } from "./utils/loadConcatenatedStatements";
+import { findCSVsFromDirectory, loadConcatenatedStatements } from "./csvUtils";
 import { logAnalysisSummary } from "./consoleLogger";
 import { getTransactionSummary } from "./transactionSummary";
 

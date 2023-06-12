@@ -1,6 +1,6 @@
 import type { TransactionSummary } from "../types";
 import { logLineBreak, logFormattedLineItem } from "./consoleLogUtils";
-import { getTransactionValue } from "../utils/getTransactionValue";
+import { getTransactionValue } from "../csvUtils/getTransactionValue";
 
 // logger dep
 export const logCategorySummary = (

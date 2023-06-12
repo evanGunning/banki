@@ -1,5 +1,5 @@
 import type { RecurringTransaction, CCTransaction } from "../types";
-import { getTransactionValue } from "../utils/getTransactionValue";
+import { getTransactionValue } from "../csvUtils";
 
 // summary: dep
 export const getRecurringTransaction = (

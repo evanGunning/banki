@@ -1,5 +1,5 @@
 import type { CCTransaction } from "../types";
-import { getTransactionValue } from "../utils/getTransactionValue";
+import { getTransactionValue } from "../csvUtils";
 import { config } from "../config";
 
 const { categoryToDescriptionMap } = config;

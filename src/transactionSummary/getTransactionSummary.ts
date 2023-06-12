@@ -6,7 +6,7 @@ import type {
   ProjectedPaycheck,
 } from "../types";
 import { config } from "../config";
-import { getTransactionValue } from "../utils/getTransactionValue";
+import { getTransactionValue } from "../csvUtils";
 import { getCustomTransactionCategory } from "./getCustomTransactionCategory";
 import { shouldIgnoreTransaction } from "./shouldIgnoreTransaction";
 import { getRecurringTransaction } from "./getRecurringTransaction";
