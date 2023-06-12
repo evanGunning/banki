@@ -4,11 +4,10 @@ import { logProjectionSummary } from "./logProjectionSummary";
 
 // main export for logging
 export const logBankiSummary = (
-  transactionSummary: TransactionSummary,
-  showTransactions: boolean
+  transactionSummary: TransactionSummary
 ): void => {
   console.log("\n");
-  logCategorySummary(transactionSummary, showTransactions);
+  logCategorySummary(transactionSummary);
   console.log("\n");
   logProjectionSummary(transactionSummary);
 };

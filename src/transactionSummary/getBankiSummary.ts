@@ -14,7 +14,7 @@ import { getUpdatedPaychecks } from "./getUpdatedPaychecks";
 import { getProjectedIncome } from "./getProjectedIncome";
 
 // summary: main export
-export const getTransactionSummary = (
+export const getBankiSummary = (
   transactions: CCTransaction[]
 ): TransactionSummary => {
   const expenseCategories: ExpenseCategories = {};

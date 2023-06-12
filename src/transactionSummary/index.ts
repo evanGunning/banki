@@ -1,1 +1,1 @@
-export { getTransactionSummary } from "./getTransactionSummary";
+export { getBankiSummary } from "./getBankiSummary";

@@ -1,10 +1,10 @@
-import type { CLIOptions } from "./cli";
+import { getCLIOptions } from "./cli";
 import { findCSVsFromDirectory, loadConcatenatedStatements } from "./csvUtils";
+import { getBankiSummary } from "./transactionSummary";
 import { logBankiSummary } from "./consoleLogger";
-import { getTransactionSummary } from "./transactionSummary";
 
-export const banki = async (cliOptions: CLIOptions): Promise<void> => {
-  const { dir, showTransactions } = cliOptions;
+export const banki = async (): Promise<void> => {
+  const { dir } = getCLIOptions();
 
   const filePaths = await findCSVsFromDirectory(dir);
   if (filePaths.length === 0) {
@@ -13,6 +13,6 @@ export const banki = async (cliOptions: CLIOptions): Promise<void> => {
   }
 
   const transactions = await loadConcatenatedStatements(filePaths);
-  const transactionSummary = getTransactionSummary(transactions);
-  logBankiSummary(transactionSummary, showTransactions);
+  const transactionSummary = getBankiSummary(transactions);
+  logBankiSummary(transactionSummary);
 };

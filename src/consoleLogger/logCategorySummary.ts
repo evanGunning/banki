@@ -1,12 +1,13 @@
 import type { TransactionSummary } from "../types";
 import { logLineBreak, logFormattedLineItem } from "./consoleLogUtils";
 import { getTransactionValue } from "../csvUtils/getTransactionValue";
+import { getCLIOptions } from "../cli";
 
 // logger dep
 export const logCategorySummary = (
-  transactionSummary: TransactionSummary,
-  showTransactions: boolean
+  transactionSummary: TransactionSummary
 ): void => {
+  const { showTransactions } = getCLIOptions();
   const { expenseCategories, net } = transactionSummary;
   console.log("Transaction Summary By Category");
   logLineBreak();
