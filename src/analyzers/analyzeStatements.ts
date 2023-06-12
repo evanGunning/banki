@@ -18,6 +18,14 @@ interface CategorySummary {
   transactions: CCTransaction[];
 }
 
+interface Paycheck {
+  description: string;
+  label: string;
+  estimatedAmount: number;
+  frequencyInDays: number;
+  paycheckTransactions: CCTransaction[];
+}
+
 // The string key is the category name
 type ExpenseCategories = Record<string, CategorySummary>;
 
@@ -26,6 +34,8 @@ interface TransactionSummary {
   recurringTransactions: RecurringTransaction[];
   net: number;
   unpaidRecurringEstimate: number;
+  paychecks: Paycheck[];
+  projectedIncome: number;
 }
 
 const findRecurringTransaction = (
@@ -44,6 +54,83 @@ const findRecurringTransaction = (
   });
 };
 
+const getUpdatedPaychecks = (
+  paychecks: Paycheck[],
+  transaction: CCTransaction
+): Paycheck[] => {
+  const updatedPaychecks = [...paychecks];
+  const paycheckIndex = updatedPaychecks.findIndex((paycheck) => {
+    return getTransactionValue(transaction, "description")
+      .toLowerCase()
+      .includes(paycheck.description.toLowerCase());
+  });
+
+  if (paycheckIndex !== -1) {
+    updatedPaychecks[paycheckIndex].paycheckTransactions.push(transaction);
+  }
+
+  return updatedPaychecks;
+};
+
+const getDaysInMonth = (month: number, year: number): number => {
+  // Create a new Date object for the next month's first day
+  const nextMonth = new Date(year, month, 1);
+
+  // Subtract 1 day from the next month's first day
+  nextMonth.setDate(nextMonth.getDate() - 1);
+
+  // The resulting date will be the last day of the desired month
+  return nextMonth.getDate();
+};
+
+const getProjectedIncome = (paychecks: Paycheck[]): number => {
+  // for each paycheck in paychecks, get the most recent paycheck transaction
+  // compute how many additional paychecks will be received this month
+  // add total to totalProjectedIncome
+  let projectedIncome = 0;
+
+  paychecks.forEach((paycheck) => {
+    let mostRecentPaycheckTransaction: CCTransaction | undefined;
+
+    const paycheckTransactions = paycheck.paycheckTransactions;
+    paycheckTransactions.forEach((transaction) => {
+      if (
+        mostRecentPaycheckTransaction === undefined ||
+        getTransactionValue(transaction, "postDate") >
+          getTransactionValue(mostRecentPaycheckTransaction, "postDate")
+      ) {
+        mostRecentPaycheckTransaction = transaction;
+      }
+    });
+
+    // For now, if no paycheck transactions are found, make one up
+    if (mostRecentPaycheckTransaction === undefined) {
+      mostRecentPaycheckTransaction = {
+        [config.transactionKeys.postDate[0]]: "01/01/2023",
+      };
+    }
+
+    // based on the computed mostRecentPaycheckTransaction, determine how many more
+    // paychecks will be received this month. Add the total to projectedIncome
+    if (mostRecentPaycheckTransaction !== undefined) {
+      const [month, day, year] = getTransactionValue(
+        mostRecentPaycheckTransaction,
+        "postDate"
+      ).split("/");
+      const mostRecentPayDay = Number(day);
+      const daysInMonth = getDaysInMonth(Number(month), Number(year));
+
+      let nextPayDay = mostRecentPayDay + paycheck.frequencyInDays;
+      while (nextPayDay <= daysInMonth) {
+        projectedIncome += paycheck.estimatedAmount;
+        nextPayDay += paycheck.frequencyInDays;
+      }
+    }
+  });
+
+  return projectedIncome;
+};
+
 const computeTransactionSummary = (
   transactions: CCTransaction[]
 ): TransactionSummary => {
@@ -57,6 +144,12 @@ const computeTransactionSummary = (
         actualDate: "",
       };
     });
+  let paychecks: Paycheck[] = config.paychecks.map((paycheckConf) => {
+    return {
+      ...paycheckConf,
+      paycheckTransactions: [],
+    };
+  });
 
   transactions.forEach((transaction) => {
     const amount = Number(getTransactionValue(transaction, "amount"));
@@ -75,6 +168,7 @@ const computeTransactionSummary = (
         expenseCategories[customCategory].amount + amount;
       expenseCategories[customCategory].transactions.push(transaction);
 
+      // TODO: getUpdatedRecurringTransactions
       const recurringTransactionIndex = findRecurringTransaction(
         recurringTransactions,
         transaction
@@ -85,6 +179,8 @@ const computeTransactionSummary = (
         recurringTransactions[recurringTransactionIndex].actualDate =
           getTransactionValue(transaction, "postDate");
       }
+
+      paychecks = getUpdatedPaychecks(paychecks, transaction);
     }
   });
 
@@ -108,6 +204,8 @@ const computeTransactionSummary = (
     expenseCategories,
     recurringTransactions,
     unpaidRecurringEstimate,
+    paychecks,
+    projectedIncome: getProjectedIncome(paychecks),
   };
 };
 
@@ -146,7 +244,7 @@ const logCategorySummary = (
 };
 
 const logRecurringTransactionTableHeader = (): void => {
-  console.log("Recurring Transactions");
+  console.log("Projected Transactions");
   logLineBreak("large");
   console.log(
     `${"Label".padEnd(colWidth)}${"Amount".padStart(colWidth)}${"Day".padStart(
@@ -156,20 +254,26 @@ const logRecurringTransactionTableHeader = (): void => {
   logLineBreak("large");
 };
 
-const logRecurringTransactionSummary = (
-  transactionSummary: TransactionSummary
-): void => {
-  const { recurringTransactions, unpaidRecurringEstimate, net } =
-    transactionSummary;
+const logPorjectionSummary = (transactionSummary: TransactionSummary): void => {
+  const {
+    recurringTransactions,
+    unpaidRecurringEstimate,
+    net,
+    projectedIncome,
+  } = transactionSummary;
   logRecurringTransactionTableHeader();
   recurringTransactions.forEach((recTransaction) => {
     logFormattedRecurringTransaction(recTransaction);
   });
   logLineBreak("large");
   logFormattedLineItem("Proj. Bills", -1 * unpaidRecurringEstimate, true);
-  logFormattedLineItem("Proj. Income", 0, true); // TODO: add income
+  logFormattedLineItem("Proj. Income", projectedIncome, true); // TODO: add income
   logLineBreak("small");
-  logFormattedLineItem("Proj. Net", net - unpaidRecurringEstimate, true);
+  logFormattedLineItem(
+    "Proj. Net",
+    net + projectedIncome - unpaidRecurringEstimate,
+    true
+  );
   logLineBreak("large");
 };
 
@@ -180,7 +284,7 @@ const logAnalysisSummary = (
   console.log("\n");
   logCategorySummary(transactionSummary, showTransactions);
   console.log("\n");
-  logRecurringTransactionSummary(transactionSummary);
+  logPorjectionSummary(transactionSummary);
 };
 
 export const analyzeStatements = async (
