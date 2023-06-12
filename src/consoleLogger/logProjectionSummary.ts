@@ -32,12 +32,12 @@ export const logProjectionSummary = (
     logFormattedRecurringTransaction(recTransaction);
   });
   logLineBreak("large");
-  logFormattedLineItem("Proj. Bills", -1 * unpaidRecurringEstimate, true);
-  logFormattedLineItem("Proj. Income", projectedIncome, true); // TODO: add income
+  logFormattedLineItem("Proj. Bills", unpaidRecurringEstimate, true);
+  logFormattedLineItem("Proj. Income", projectedIncome, true);
   logLineBreak("small");
   logFormattedLineItem(
     "Proj. Net",
-    net + projectedIncome - unpaidRecurringEstimate,
+    net + projectedIncome + unpaidRecurringEstimate,
     true
   );
   logLineBreak("large");

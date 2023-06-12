@@ -64,7 +64,7 @@ export const logFormattedRecurringTransaction = (
     console.log(
       chalk.green(
         `${label.slice(0, colWidth).padEnd(colWidth)}${currencyFormatter
-          .format(-1 * actualAmount)
+          .format(actualAmount)
           .padStart(colWidth)}${getFormattedDate(actualDate).padStart(
           colWidth
         )}`
