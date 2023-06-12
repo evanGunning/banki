@@ -1,12 +1,11 @@
 import type {
-  CSVTransaction,
+  BankiTransaction,
   TransactionSummary,
   ExpenseCategories,
   RecurringTransaction,
   ProjectedPaycheck,
 } from "../types";
 import { config } from "../config";
-import { getTransactionValue } from "../csvUtils";
 import { getCustomTransactionCategory } from "./getCustomTransactionCategory";
 import { shouldIgnoreTransaction } from "./shouldIgnoreTransaction";
 import { getRecurringTransaction } from "./getRecurringTransaction";
@@ -15,7 +14,7 @@ import { getProjectedIncome } from "./getProjectedIncome";
 
 // summary: main export
 export const getBankiSummary = (
-  transactions: CSVTransaction[]
+  transactions: BankiTransaction[]
 ): TransactionSummary => {
   const expenseCategories: ExpenseCategories = {};
   const recurringTransactions: RecurringTransaction[] =
@@ -24,7 +23,7 @@ export const getBankiSummary = (
         ...recTransaction,
         isPaid: false,
         actualAmount: 0,
-        actualDate: "",
+        actualDate: new Date(),
       };
     });
   let projectedPaychecks: ProjectedPaycheck[] = config.paychecks.map(
@@ -37,7 +36,7 @@ export const getBankiSummary = (
   );
 
   transactions.forEach((transaction) => {
-    const amount = Number(getTransactionValue(transaction, "amount"));
+    const amount = transaction.amount;
     const customCategory = getCustomTransactionCategory(transaction);
 
     if (!shouldIgnoreTransaction(transaction)) {
@@ -62,7 +61,7 @@ export const getBankiSummary = (
         recurringTransactions[recurringTransactionIndex].isPaid = true;
         recurringTransactions[recurringTransactionIndex].actualAmount = amount;
         recurringTransactions[recurringTransactionIndex].actualDate =
-          getTransactionValue(transaction, "postDate");
+          transaction.postDate;
       }
 
       projectedPaychecks = getUpdatedPaychecks(projectedPaychecks, transaction);

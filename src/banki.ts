@@ -14,7 +14,7 @@ export const banki = async (): Promise<void> => {
   }
 
   const transactions = await loadConcatenatedStatements(filePaths);
-  // const bankiTransactions = serializeTransactions(transactions);
-  const transactionSummary = getBankiSummary(transactions);
+  const bankiTransactions = serializeTransactions(transactions);
+  const transactionSummary = getBankiSummary(bankiTransactions);
   logBankiSummary(transactionSummary);
 };

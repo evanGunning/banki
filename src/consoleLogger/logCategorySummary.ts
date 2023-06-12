@@ -1,6 +1,5 @@
 import type { TransactionSummary } from "../types";
 import { logLineBreak, logFormattedLineItem } from "./consoleLogUtils";
-import { getTransactionValue } from "../csvUtils/getTransactionValue";
 import { getCLIOptions } from "../cli";
 
 // logger dep
@@ -24,11 +23,8 @@ export const logCategorySummary = (
       if (showTransactions) {
         expenseCategories[category].transactions.forEach((transaction) => {
           logFormattedLineItem(
-            `${"".padStart(4)}${getTransactionValue(
-              transaction,
-              "description"
-            )}`,
-            Number(getTransactionValue(transaction, "amount"))
+            `${"".padStart(4)}${transaction.description}`,
+            transaction.amount
           );
         });
       }

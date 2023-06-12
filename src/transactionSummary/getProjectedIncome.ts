@@ -1,6 +1,4 @@
-import type { ProjectedPaycheck, CSVTransaction } from "../types";
-import { getTransactionValue } from "../csvUtils";
-import { config } from "../config";
+import type { ProjectedPaycheck, BankiTransaction } from "../types";
 import { getDaysInMonth } from "./getDaysInMonth";
 
 // summary: dep
@@ -13,14 +11,14 @@ export const getProjectedIncome = (
   let projectedIncome = 0;
 
   projectedPaychecks.forEach((paycheck) => {
-    let mostRecentPaycheckTransaction: CSVTransaction | undefined;
+    let mostRecentPaycheckTransaction: BankiTransaction | undefined;
 
     const paycheckTransactions = paycheck.paycheckTransactions;
     paycheckTransactions.forEach((transaction) => {
       if (
         mostRecentPaycheckTransaction === undefined ||
-        getTransactionValue(transaction, "postDate") >
-          getTransactionValue(mostRecentPaycheckTransaction, "postDate")
+        transaction.postDate.getTime() >
+          mostRecentPaycheckTransaction.postDate.getTime()
       ) {
         mostRecentPaycheckTransaction = transaction;
       }
@@ -29,19 +27,21 @@ export const getProjectedIncome = (
     // For now, if no paycheck transactions are found, make one up
     if (mostRecentPaycheckTransaction === undefined) {
       mostRecentPaycheckTransaction = {
-        [config.transactionKeys.postDate[0]]: "01/01/2023",
+        description: "",
+        amount: 0,
+        category: "",
+        postDate: new Date(2023, 0, 1),
       };
     }
 
     // based on the computed mostRecentPaycheckTransaction, determine how many more
     // projectedPaychecks will be received this month. Add the total to projectedIncome
     if (mostRecentPaycheckTransaction !== undefined) {
-      const [month, day, year] = getTransactionValue(
-        mostRecentPaycheckTransaction,
-        "postDate"
-      ).split("/");
-      const mostRecentPayDay = Number(day);
-      const daysInMonth = getDaysInMonth(Number(month), Number(year));
+      const mostRecentPayDay = mostRecentPaycheckTransaction.postDate.getDate();
+      const daysInMonth = getDaysInMonth(
+        mostRecentPaycheckTransaction.postDate.getMonth(),
+        mostRecentPaycheckTransaction.postDate.getFullYear()
+      );
 
       let nextPayDay = mostRecentPayDay + paycheck.frequencyInDays;
       while (nextPayDay <= daysInMonth) {

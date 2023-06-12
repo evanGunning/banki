@@ -16,12 +16,12 @@ export interface RecurringTransaction {
   label: string;
   isPaid: boolean;
   actualAmount: number;
-  actualDate: string;
+  actualDate: Date;
 }
 
 export interface CategorySummary {
   amount: number;
-  transactions: CSVTransaction[];
+  transactions: BankiTransaction[];
 }
 
 export interface ProjectedPaycheck {
@@ -29,7 +29,7 @@ export interface ProjectedPaycheck {
   label: string;
   estimatedAmount: number;
   frequencyInDays: number;
-  paycheckTransactions: CSVTransaction[];
+  paycheckTransactions: BankiTransaction[];
 }
 
 // key: category name

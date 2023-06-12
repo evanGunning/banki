@@ -1,14 +1,13 @@
-import type { RecurringTransaction, CSVTransaction } from "../types";
-import { getTransactionValue } from "../csvUtils";
+import type { RecurringTransaction, BankiTransaction } from "../types";
 
 // summary: dep
 export const getRecurringTransaction = (
   recurringTransactions: RecurringTransaction[],
-  curTransaction: CSVTransaction
+  curTransaction: BankiTransaction
 ): number => {
   return recurringTransactions.findIndex((recTransaction, index) => {
     if (
-      getTransactionValue(curTransaction, "description")
+      curTransaction.description
         .toLowerCase()
         .includes(recTransaction.description.toLowerCase())
     ) {

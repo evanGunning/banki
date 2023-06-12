@@ -1,14 +1,13 @@
-import type { ProjectedPaycheck, CSVTransaction } from "../types";
-import { getTransactionValue } from "../csvUtils";
+import type { ProjectedPaycheck, BankiTransaction } from "../types";
 
 // summary: dep
 export const getUpdatedPaychecks = (
   projectedPaychecks: ProjectedPaycheck[],
-  transaction: CSVTransaction
+  transaction: BankiTransaction
 ): ProjectedPaycheck[] => {
   const updatedPaychecks = [...projectedPaychecks];
   const paycheckIndex = updatedPaychecks.findIndex((paycheck) => {
-    return getTransactionValue(transaction, "description")
+    return transaction.description
       .toLowerCase()
       .includes(paycheck.description.toLowerCase());
   });
