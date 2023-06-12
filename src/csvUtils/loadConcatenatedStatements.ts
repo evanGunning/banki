@@ -1,5 +1,5 @@
 import type { CCTransaction } from "../types";
-import { parseCSV } from "./parseCSV";
+import { parseCSV } from "./";
 
 export const loadConcatenatedStatements = async (
   filePaths: string[]
