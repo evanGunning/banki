@@ -1,5 +1,4 @@
-import type { CCTransaction } from "../types";
-import { getTransactionValue } from "./getTransactionValue";
+import type { BankiTransaction } from "../types";
 import { config } from "../config";
 
 const { categoryToDescriptionMap } = config;
@@ -15,12 +14,12 @@ Object.keys(categoryToDescriptionMap).forEach((category) => {
 const descriptionsToMatch = Object.keys(descriptionToCategoryMap);
 
 export const getCustomTransactionCategory = (
-  transaction: CCTransaction
+  transaction: BankiTransaction
 ): string => {
   // 1. check if description matches any keys in descriptionToCategoryMap; use the corresponding custom categories
   for (let i = 0; i < descriptionsToMatch.length; i++) {
     if (
-      getTransactionValue(transaction, "description")
+      transaction.description
         .toLowerCase()
         .includes(descriptionsToMatch[i].toLowerCase())
     ) {
@@ -29,5 +28,5 @@ export const getCustomTransactionCategory = (
   }
 
   // 2. if no custom category is found, use the default category
-  return getTransactionValue(transaction, "category");
+  return transaction.category;
 };

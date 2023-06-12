@@ -1,15 +1,15 @@
-import type { CCTransaction } from "../types";
-import { parseCSV } from "./parseCSV";
+import type { CSVTransaction } from "../types";
+import { parseCSV } from "./";
 
 export const loadConcatenatedStatements = async (
   filePaths: string[]
-): Promise<CCTransaction[]> => {
-  let transactions: CCTransaction[] = [];
+): Promise<CSVTransaction[]> => {
+  let transactions: CSVTransaction[] = [];
 
   for (let i = 0; i < filePaths.length; i++) {
     const filePath = filePaths[i];
     console.log(`loading ${filePath}...`);
-    const parsedStatement: CCTransaction[] = await parseCSV<CCTransaction>(
+    const parsedStatement: CSVTransaction[] = await parseCSV<CSVTransaction>(
       filePath
     );
     transactions = [...transactions, ...parsedStatement];

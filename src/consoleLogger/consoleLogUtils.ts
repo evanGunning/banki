@@ -10,6 +10,10 @@ export const currencyFormatter = new Intl.NumberFormat("en-US", {
 
 type LineBreakSize = "small" | "large";
 
+const getFormattedDate = (date: Date): string => {
+  return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+};
+
 export const logLineBreak = (size: LineBreakSize = "small"): void => {
   if (size === "small") {
     console.log("".padEnd(colWidth * 2, "-"));
@@ -60,8 +64,10 @@ export const logFormattedRecurringTransaction = (
     console.log(
       chalk.green(
         `${label.slice(0, colWidth).padEnd(colWidth)}${currencyFormatter
-          .format(-1 * actualAmount)
-          .padStart(colWidth)}${actualDate.padStart(colWidth)}`
+          .format(actualAmount)
+          .padStart(colWidth)}${getFormattedDate(actualDate).padStart(
+          colWidth
+        )}`
       )
     );
   } else {

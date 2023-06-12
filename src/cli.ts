@@ -1,10 +1,13 @@
 import { program } from "commander";
-import { analyzeStatements } from "./analyzers/analyzeStatements";
+import { banki } from "./banki";
 
 export interface CLIOptions {
   dir: string;
   showTransactions: boolean;
 }
+
+let cliOptions: CLIOptions;
+export const getCLIOptions = (): CLIOptions => cliOptions;
 
 program
   .requiredOption(
@@ -12,7 +15,8 @@ program
   )
   .option("-s, --show-transactions, Show transactions for each category")
   .action((options) => {
-    void analyzeStatements(options);
+    cliOptions = options;
+    void banki();
   });
 
 program.parse(process.argv);
