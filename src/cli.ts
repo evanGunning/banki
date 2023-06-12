@@ -6,10 +6,6 @@ export interface CLIOptions {
   showTransactions: boolean;
 }
 
-const a: string = "a";
-const b: number = a;
-console.log(b);
-
 program
   .requiredOption(
     "-d, --dir <dir>, Specify the directory where your statements are located"
