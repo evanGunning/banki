@@ -1,4 +1,13 @@
+// generic type for a row in a statement CSV; could contain anything
 export type CSVTransaction = Record<string, string>;
+
+// serialized transaction for use inside Banki
+export interface BankiTransaction {
+  description: string;
+  amount: number;
+  category: string;
+  postDate: Date;
+}
 
 export interface RecurringTransaction {
   description: string;

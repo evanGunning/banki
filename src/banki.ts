@@ -2,6 +2,7 @@ import { getCLIOptions } from "./cli";
 import { findCSVsFromDirectory, loadConcatenatedStatements } from "./csvUtils";
 import { getBankiSummary } from "./transactionSummary";
 import { logBankiSummary } from "./consoleLogger";
+import { serializeTransactions } from "./csvUtils/serializeTransactions";
 
 export const banki = async (): Promise<void> => {
   const { dir } = getCLIOptions();
@@ -13,6 +14,7 @@ export const banki = async (): Promise<void> => {
   }
 
   const transactions = await loadConcatenatedStatements(filePaths);
+  // const bankiTransactions = serializeTransactions(transactions);
   const transactionSummary = getBankiSummary(transactions);
   logBankiSummary(transactionSummary);
 };
