@@ -1,5 +1,5 @@
 import type {
-  CCTransaction,
+  CSVTransaction,
   TransactionSummary,
   ExpenseCategories,
   RecurringTransaction,
@@ -15,7 +15,7 @@ import { getProjectedIncome } from "./getProjectedIncome";
 
 // summary: main export
 export const getBankiSummary = (
-  transactions: CCTransaction[]
+  transactions: CSVTransaction[]
 ): TransactionSummary => {
   const expenseCategories: ExpenseCategories = {};
   const recurringTransactions: RecurringTransaction[] =

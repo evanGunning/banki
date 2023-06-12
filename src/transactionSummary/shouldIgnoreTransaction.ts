@@ -1,11 +1,11 @@
-import type { CCTransaction } from "../types";
+import type { CSVTransaction } from "../types";
 import { getTransactionValue } from "../csvUtils";
 import { config } from "../config";
 
 const { ignoredTransactionDescriptionSubstrs } = config;
 
 export const shouldIgnoreTransaction = (
-  transaction: CCTransaction
+  transaction: CSVTransaction
 ): boolean => {
   try {
     const description = getTransactionValue(

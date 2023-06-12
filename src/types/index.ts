@@ -1,4 +1,4 @@
-export type CCTransaction = Record<string, string>;
+export type CSVTransaction = Record<string, string>;
 
 export interface RecurringTransaction {
   description: string;
@@ -12,7 +12,7 @@ export interface RecurringTransaction {
 
 export interface CategorySummary {
   amount: number;
-  transactions: CCTransaction[];
+  transactions: CSVTransaction[];
 }
 
 export interface ProjectedPaycheck {
@@ -20,7 +20,7 @@ export interface ProjectedPaycheck {
   label: string;
   estimatedAmount: number;
   frequencyInDays: number;
-  paycheckTransactions: CCTransaction[];
+  paycheckTransactions: CSVTransaction[];
 }
 
 // key: category name

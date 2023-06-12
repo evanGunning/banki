@@ -1,4 +1,4 @@
-import type { CCTransaction } from "../types";
+import type { CSVTransaction } from "../types";
 import { getTransactionValue } from "../csvUtils";
 import { config } from "../config";
 
@@ -15,7 +15,7 @@ Object.keys(categoryToDescriptionMap).forEach((category) => {
 const descriptionsToMatch = Object.keys(descriptionToCategoryMap);
 
 export const getCustomTransactionCategory = (
-  transaction: CCTransaction
+  transaction: CSVTransaction
 ): string => {
   // 1. check if description matches any keys in descriptionToCategoryMap; use the corresponding custom categories
   for (let i = 0; i < descriptionsToMatch.length; i++) {

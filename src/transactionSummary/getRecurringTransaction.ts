@@ -1,10 +1,10 @@
-import type { RecurringTransaction, CCTransaction } from "../types";
+import type { RecurringTransaction, CSVTransaction } from "../types";
 import { getTransactionValue } from "../csvUtils";
 
 // summary: dep
 export const getRecurringTransaction = (
   recurringTransactions: RecurringTransaction[],
-  curTransaction: CCTransaction
+  curTransaction: CSVTransaction
 ): number => {
   return recurringTransactions.findIndex((recTransaction, index) => {
     if (

@@ -1,4 +1,4 @@
-import type { ProjectedPaycheck, CCTransaction } from "../types";
+import type { ProjectedPaycheck, CSVTransaction } from "../types";
 import { getTransactionValue } from "../csvUtils";
 import { config } from "../config";
 import { getDaysInMonth } from "./getDaysInMonth";
@@ -13,7 +13,7 @@ export const getProjectedIncome = (
   let projectedIncome = 0;
 
   projectedPaychecks.forEach((paycheck) => {
-    let mostRecentPaycheckTransaction: CCTransaction | undefined;
+    let mostRecentPaycheckTransaction: CSVTransaction | undefined;
 
     const paycheckTransactions = paycheck.paycheckTransactions;
     paycheckTransactions.forEach((transaction) => {

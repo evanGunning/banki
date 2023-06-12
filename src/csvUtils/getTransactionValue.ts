@@ -1,10 +1,10 @@
-import type { CCTransaction } from "../types";
+import type { CSVTransaction } from "../types";
 import { config } from "../config";
 
 type TransactionKey = "description" | "amount" | "category" | "postDate";
 
 export const getTransactionValue = (
-  transaction: CCTransaction,
+  transaction: CSVTransaction,
   key: TransactionKey
 ): string => {
   const keySet = config.transactionKeys[key];
