@@ -3,7 +3,7 @@ import { logCategorySummary } from "./logCategorySummary";
 import { logProjectionSummary } from "./logProjectionSummary";
 
 // main export for logging
-export const logAnalysisSummary = (
+export const logBankiSummary = (
   transactionSummary: TransactionSummary,
   showTransactions: boolean
 ): void => {

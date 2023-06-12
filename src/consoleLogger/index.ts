@@ -1,1 +1,1 @@
-export { logAnalysisSummary } from "./logAnalysisSummary";
+export { logBankiSummary } from "./logBankiSummary";
