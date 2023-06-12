@@ -1,8 +1,7 @@
 import type { RecurringTransaction } from "../types";
 import chalk from "chalk";
 
-const maxLabelLength = 20;
-const colWidth = 20;
+export const colWidth = 30;
 
 export const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -13,9 +12,9 @@ type LineBreakSize = "small" | "large";
 
 export const logLineBreak = (size: LineBreakSize = "small"): void => {
   if (size === "small") {
-    console.log("".padEnd(40, "-"));
+    console.log("".padEnd(colWidth * 2, "-"));
   } else if (size === "large") {
-    console.log("".padEnd(60, "-"));
+    console.log("".padEnd(colWidth * 3, "-"));
   }
 };
 
@@ -29,7 +28,7 @@ export const logFormattedLineItem = (
 ): void => {
   const logStr = `${label
     .concat(":")
-    .slice(0, maxLabelLength)
+    .slice(0, colWidth)
     .padEnd(colWidth)}${currencyFormatter
     .format(currencyVal)
     .padStart(colWidth)}`;
@@ -60,7 +59,7 @@ export const logFormattedRecurringTransaction = (
   if (isPaid) {
     console.log(
       chalk.green(
-        `${label.slice(0, maxLabelLength).padEnd(colWidth)}${currencyFormatter
+        `${label.slice(0, colWidth).padEnd(colWidth)}${currencyFormatter
           .format(-1 * actualAmount)
           .padStart(colWidth)}${actualDate.padStart(colWidth)}`
       )
@@ -68,7 +67,7 @@ export const logFormattedRecurringTransaction = (
   } else {
     console.log(
       chalk.red(
-        `${label.slice(0, maxLabelLength).padEnd(colWidth)}${currencyFormatter
+        `${label.slice(0, colWidth).padEnd(colWidth)}${currencyFormatter
           .format(estimatedAmount)
           .padStart(colWidth)}${estimatedDayNumber
           .toString()

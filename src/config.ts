@@ -9,10 +9,17 @@ interface RecurringTransactionRc {
   label: string;
 }
 
+interface PaycheckRc {
+  description: string;
+  label: string;
+  estimatedAmount: number;
+  frequencyInDays: number;
+}
+
 interface AnalyzerConfig {
-  // if a transaction description contains any of these substrings, it will be ignored
+  // If a source transaction description contains any of these substrings, it will be ignored
   ignoredTransactionDescriptionSubstrs: string[];
-  // this set of keys will be used, in order, to determine how to read description values from provided CSVs
+  // This set of keys will be used, in order, to determine how to read description values from provided CSVs
   // the first key that results in a non-empty value will be used for the corresponding concept
   transactionKeys: {
     description: string[];
@@ -20,10 +27,15 @@ interface AnalyzerConfig {
     category: string[];
     postDate: string[];
   };
-  // if a transaction description matches one of the descriptions in this map, the corresponding key will be used as the category
+  // If a transaction description matches one of the descriptions in this map, the corresponding key will be used as the category
   // the match is case-insensitive
   categoryToDescriptionMap: Record<string, string[]>;
+  // If a transaction description matches one of the descriptions in this map, whether or not the transactions
+  // is paid will be remembered and unpaid transactions will be included in a projection of end of month costs
   recurringTransactions: RecurringTransactionRc[];
+  // Describes recurring paycheck behavior. Will project future paychecks for a given month
+  // based on the most recent paycheck detected
+  paychecks: PaycheckRc[];
 }
 
 const defaultConfig: AnalyzerConfig = {
@@ -36,6 +48,7 @@ const defaultConfig: AnalyzerConfig = {
   ignoredTransactionDescriptionSubstrs: [],
   categoryToDescriptionMap: {},
   recurringTransactions: [],
+  paychecks: [],
 };
 
 let computedConfig: AnalyzerConfig;
