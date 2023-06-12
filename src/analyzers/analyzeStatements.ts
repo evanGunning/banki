@@ -18,7 +18,7 @@ interface CategorySummary {
   transactions: CCTransaction[];
 }
 
-interface Paycheck {
+interface ProjectedPaycheck {
   description: string;
   label: string;
   estimatedAmount: number;
@@ -34,7 +34,7 @@ interface TransactionSummary {
   recurringTransactions: RecurringTransaction[];
   net: number;
   unpaidRecurringEstimate: number;
-  paychecks: Paycheck[];
+  projectedPaychecks: ProjectedPaycheck[];
   projectedIncome: number;
 }
 
@@ -55,10 +55,10 @@ const findRecurringTransaction = (
 };
 
 const getUpdatedPaychecks = (
-  paychecks: Paycheck[],
+  projectedPaychecks: ProjectedPaycheck[],
   transaction: CCTransaction
-): Paycheck[] => {
-  const updatedPaychecks = [...paychecks];
+): ProjectedPaycheck[] => {
+  const updatedPaychecks = [...projectedPaychecks];
   const paycheckIndex = updatedPaychecks.findIndex((paycheck) => {
     return getTransactionValue(transaction, "description")
       .toLowerCase()
@@ -83,13 +83,15 @@ const getDaysInMonth = (month: number, year: number): number => {
   return nextMonth.getDate();
 };
 
-const getProjectedIncome = (paychecks: Paycheck[]): number => {
-  // for each paycheck in paychecks, get the most recent paycheck transaction
-  // compute how many additional paychecks will be received this month
+const getProjectedIncome = (
+  projectedPaychecks: ProjectedPaycheck[]
+): number => {
+  // for each paycheck in projectedPaychecks, get the most recent paycheck transaction
+  // compute how many additional projectedPaychecks will be received this month
   // add total to totalProjectedIncome
   let projectedIncome = 0;
 
-  paychecks.forEach((paycheck) => {
+  projectedPaychecks.forEach((paycheck) => {
     let mostRecentPaycheckTransaction: CCTransaction | undefined;
 
     const paycheckTransactions = paycheck.paycheckTransactions;
@@ -111,7 +113,7 @@ const getProjectedIncome = (paychecks: Paycheck[]): number => {
     }
 
     // based on the computed mostRecentPaycheckTransaction, determine how many more
-    // paychecks will be received this month. Add the total to projectedIncome
+    // projectedPaychecks will be received this month. Add the total to projectedIncome
     if (mostRecentPaycheckTransaction !== undefined) {
       const [month, day, year] = getTransactionValue(
         mostRecentPaycheckTransaction,
@@ -144,12 +146,14 @@ const computeTransactionSummary = (
         actualDate: "",
       };
     });
-  let paychecks: Paycheck[] = config.paychecks.map((paycheckConf) => {
-    return {
-      ...paycheckConf,
-      paycheckTransactions: [],
-    };
-  });
+  let projectedPaychecks: ProjectedPaycheck[] = config.paychecks.map(
+    (paycheckConf) => {
+      return {
+        ...paycheckConf,
+        paycheckTransactions: [],
+      };
+    }
+  );
 
   transactions.forEach((transaction) => {
     const amount = Number(getTransactionValue(transaction, "amount"));
@@ -180,7 +184,7 @@ const computeTransactionSummary = (
           getTransactionValue(transaction, "postDate");
       }
 
-      paychecks = getUpdatedPaychecks(paychecks, transaction);
+      projectedPaychecks = getUpdatedPaychecks(projectedPaychecks, transaction);
     }
   });
 
@@ -204,8 +208,8 @@ const computeTransactionSummary = (
     expenseCategories,
     recurringTransactions,
     unpaidRecurringEstimate,
-    paychecks,
-    projectedIncome: getProjectedIncome(paychecks),
+    projectedPaychecks,
+    projectedIncome: getProjectedIncome(projectedPaychecks),
   };
 };
 
