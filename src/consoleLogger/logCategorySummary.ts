@@ -8,20 +8,39 @@ export const logCategorySummary = (
 ): void => {
   const { showTransactions } = getCLIOptions();
   const { expenseCategories, net } = transactionSummary;
+  const totalIncome = Object.values(expenseCategories).reduce(
+    (acc, category) => {
+      const categoryTotal = category.transactions.reduce((sum, transaction) => {
+        return transaction.amount > 0 ? sum + transaction.amount : sum;
+      }, 0);
+      return acc + categoryTotal;
+    },
+    0
+  );
+  const totalExpenses = Object.values(expenseCategories).reduce(
+    (acc, category) => {
+      const categoryTotal = category.transactions.reduce((sum, transaction) => {
+        return transaction.amount < 0 ? sum + transaction.amount : sum;
+      }, 0);
+      return acc + categoryTotal;
+    },
+    0
+  );
+
   console.log("Transaction Summary By Category");
   logLineBreak();
-  Object.keys(expenseCategories)
-    .sort()
-    .forEach((category) => {
-      const transactionCount = expenseCategories[category].transactions.length;
+  Object.entries(expenseCategories)
+    .sort(([, a], [, b]) => a.amount - b.amount)
+    .forEach(([category, categoryData]) => {
+      const transactionCount = categoryData.transactions.length;
       logFormattedLineItem(
         `(${transactionCount}) ${category}`,
-        expenseCategories[category].amount,
+        categoryData.amount,
         true
       );
 
       if (showTransactions) {
-        expenseCategories[category].transactions.forEach((transaction) => {
+        categoryData.transactions.forEach((transaction) => {
           logFormattedLineItem(
             `${"".padStart(4)}${transaction.description}`,
             transaction.amount
@@ -29,6 +48,9 @@ export const logCategorySummary = (
         });
       }
     });
+  logLineBreak("small");
+  logFormattedLineItem("Income", totalIncome, true);
+  logFormattedLineItem("Expenses", totalExpenses, true);
   logLineBreak("small");
   logFormattedLineItem("Net", net, true);
   logLineBreak("small");

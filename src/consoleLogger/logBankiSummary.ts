@@ -1,6 +1,6 @@
 import type { TransactionSummary } from "../types";
 import { logCategorySummary } from "./logCategorySummary";
-import { logProjectionSummary } from "./logProjectionSummary";
+// import { logProjectionSummary } from "./logProjectionSummary";
 
 // main export for logging
 export const logBankiSummary = (
@@ -8,6 +8,6 @@ export const logBankiSummary = (
 ): void => {
   console.log("\n");
   logCategorySummary(transactionSummary);
-  console.log("\n");
-  logProjectionSummary(transactionSummary);
+  // console.log("\n");
+  // logProjectionSummary(transactionSummary);
 };
