@@ -34,18 +34,20 @@ export const logCategorySummary = (
     .forEach(([category, categoryData]) => {
       const transactionCount = categoryData.transactions.length;
       logFormattedLineItem(
-        `(${transactionCount}) ${category}`,
+        `(${transactionCount})${transactionCount < 10 ? " " : ""} ${category}`,
         categoryData.amount,
         true
       );
 
       if (showTransactions) {
-        categoryData.transactions.forEach((transaction) => {
-          logFormattedLineItem(
-            `${"".padStart(4)}${transaction.description}`,
-            transaction.amount
-          );
-        });
+        [...categoryData.transactions]
+          .sort((a, b) => a.amount - b.amount)
+          .forEach((transaction) => {
+            logFormattedLineItem(
+              `${"".padStart(4)}${transaction.description}`,
+              transaction.amount
+            );
+          });
       }
     });
   logLineBreak("small");
